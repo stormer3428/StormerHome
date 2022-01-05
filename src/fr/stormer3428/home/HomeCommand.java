@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 public class HomeCommand implements CommandExecutor {
 
+	@SuppressWarnings("unused")
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 		if(sender instanceof Player) {
@@ -21,19 +22,17 @@ public class HomeCommand implements CommandExecutor {
 					if(home != null) {
 						home.home(p);
 						return true;
-					}else {
-						message.error(p, "You do not have any default home set");
-						return false;
 					}
+					message.error(p, "You do not have any default home set");
+					return false;
 				}
 				Home home = Home.findHome(p, args[0]);
 				if(home != null) {
 					home.home(p);
 					return true;
-				}else {
-					message.error(p, "No home with such name : " + args[0]);
-					return false;
 				}
+				message.error(p, "No home with such name : " + args[0]);
+				return false;
 			}else if(cmd.getName().equalsIgnoreCase("sethome")) {
 				int maxHomes = p.isOp() ? StormerHome.i.getConfig().getInt("maxOpHomes") : StormerHome.i.getConfig().getInt("maxHomes");
 				int homes = Home.getPlayerHomes(p).size();
@@ -60,25 +59,23 @@ public class HomeCommand implements CommandExecutor {
 					home.delete();
 					message.normal(p, "Home " + home.getName() + " removed!");
 					return true;
-				}else {
-					message.error(p, "No home with such name : " + args[0]);
-					return false;
 				}
+				message.error(p, "No home with such name : " + args[0]);
+				return false;
 			}else if(cmd.getName().equalsIgnoreCase("shreload")) {
 				if(p.isOp()) {
 					StormerHome.i.reload();
 					message.normal(p, "Successfully relaoded the plugin");
 					return true;
-				}else {
-					message.error(p, "You do not have the permission to use this command");
-					return false;
 				}
+				message.error(p, "You do not have the permission to use this command");
+				return false;
 			}
 		}
 		return false;
 	}
 
-	private void listHomes(Player p) {
+	private static void listHomes(Player p) {
 		message.normal(p, "<===========(Homes of "+p.getName()+")===========");
 		for(Home home : Home.getPlayerHomes(p)) {
 			message.normal(p, " - " + home.getName() + " :");

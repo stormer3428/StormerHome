@@ -17,7 +17,7 @@ public class Home {
 	private String owner;
 	private String name;
 
-	static List<Home> all = new ArrayList<Home>();
+	static List<Home> all = new ArrayList<>();
 
 	public Home(@Nonnull Location loc,@Nullable Player p, String n) {
 		for(Home home : all) {
@@ -74,7 +74,7 @@ public class Home {
 	}
 
 	public static Set<Home> getPlayerHomes(String p){
-		Set<Home> homes = new HashSet<Home>();
+		Set<Home> homes = new HashSet<>();
 		for(Home home : Home.all) {
 			if(home.getOwner().equals(p)) {
 				homes.add(home);
@@ -107,7 +107,7 @@ public class Home {
 	}
 	
 	public Location getLocation() {
-		return location;
+		return this.location;
 	}
 
 	public void setLocation(Location location) {
@@ -115,7 +115,7 @@ public class Home {
 	}
 
 	public String getOwner() {
-		return owner;
+		return this.owner;
 	}
 
 	public void setOwner(String p) {
@@ -123,7 +123,7 @@ public class Home {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public void setName(String name) {
@@ -132,7 +132,7 @@ public class Home {
 
 	@Override
 	public String toString() {
-		return "[Home {"+location.toString()+","+owner+","+name+"}]";
+		return "[Home {"+this.location.toString()+","+this.owner+","+this.name+"}]";
 	}
 
 }
