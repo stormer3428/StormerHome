@@ -1,0 +1,17 @@
+api-version : 1.16
+main: fr.stormer3428.home.StormerHome
+author: stormer3428
+name: "StormerHomes"
+api : []
+version: 0.0.2
+commands:
+  home:
+    description: "Teleports you to your home"
+  homes:
+    description: "Lists all of your homes"
+  sethome:
+    description: "Sets your home"
+  delhome:
+    description: "Deletes a home"
+  shreload:
+    description: "reloads the config"
