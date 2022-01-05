@@ -23,7 +23,7 @@ public class HomeCommand implements CommandExecutor {
 						home.home(p);
 						return true;
 					}
-					message.error(p, "You do not have any default home set");
+					Message.error(p, "You do not have any default home set");
 					return false;
 				}
 				Home home = Home.findHome(p, args[0]);
@@ -31,44 +31,44 @@ public class HomeCommand implements CommandExecutor {
 					home.home(p);
 					return true;
 				}
-				message.error(p, "No home with such name : " + args[0]);
+				Message.error(p, "No home with such name : " + args[0]);
 				return false;
 			}else if(cmd.getName().equalsIgnoreCase("sethome")) {
 				int maxHomes = p.isOp() ? StormerHome.i.getConfig().getInt("maxOpHomes") : StormerHome.i.getConfig().getInt("maxHomes");
 				int homes = Home.getPlayerHomes(p).size();
 				if(homes >= maxHomes && maxHomes != -1) {
-					message.error(p, "You nhave too many homes set");
+					Message.error(p, "You nhave too many homes set");
 					return false;
 				}
 				if(args.length == 0) {
 					new Home(p.getLocation(), p, "Home");
-					message.normal(p, "Home set");
+					Message.normal(p, "Home set");
 					return true;
 				}
 				new Home(p.getLocation(), p, args[0]);
-				message.normal(p, "Home "+args[0]+" set");
+				Message.normal(p, "Home "+args[0]+" set");
 				return true;
 			}else if(cmd.getName().equalsIgnoreCase("delhome")) {
 				if(args.length == 0) {
-					message.error(p, "You need to specify a name");
-					message.error(p, "Usage : delhome <name>");
+					Message.error(p, "You need to specify a name");
+					Message.error(p, "Usage : delhome <name>");
 					return false;
 				}
 				Home home = Home.findHome(p, args[0]);
 				if(home != null) {
 					home.delete();
-					message.normal(p, "Home " + home.getName() + " removed!");
+					Message.normal(p, "Home " + home.getName() + " removed!");
 					return true;
 				}
-				message.error(p, "No home with such name : " + args[0]);
+				Message.error(p, "No home with such name : " + args[0]);
 				return false;
 			}else if(cmd.getName().equalsIgnoreCase("shreload")) {
 				if(p.isOp()) {
 					StormerHome.i.reload();
-					message.normal(p, "Successfully relaoded the plugin");
+					Message.normal(p, "Successfully relaoded the plugin");
 					return true;
 				}
-				message.error(p, "You do not have the permission to use this command");
+				Message.error(p, "You do not have the permission to use this command");
 				return false;
 			}
 		}
@@ -76,14 +76,14 @@ public class HomeCommand implements CommandExecutor {
 	}
 
 	private static void listHomes(Player p) {
-		message.normal(p, "<===========(Homes of "+p.getName()+")===========");
+		Message.normal(p, "<===========(Homes of "+p.getName()+")===========");
 		for(Home home : Home.getPlayerHomes(p)) {
-			message.normal(p, " - " + home.getName() + " :");
+			Message.normal(p, " - " + home.getName() + " :");
 			Location loc = home.getLocation();
-			message.normal(p, "Location : " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
-			message.normal(p, "World : " + loc.getWorld().getName());
+			Message.normal(p, "Location : " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+			Message.normal(p, "World : " + loc.getWorld().getName());
 		}
-		message.normal(p, "<===========(Homes)===========");
+		Message.normal(p, "<===========(Homes)===========");
 	}
 
 }

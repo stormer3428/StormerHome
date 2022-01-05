@@ -102,7 +102,7 @@ public class Home {
 	}
 	
 	public void home(Player p) {
-		message.normal(p, "Going to " + getName());
+		Message.normal(p, "Going to " + getName());
 		p.teleport(getLocation());
 	}
 	
