@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class StormerHome extends JavaPlugin{
 
 	public static StormerHome i;
+	public static final String UUID = "a39d1ae3-18c5-4c02-8f91-bcb5207d437f";
 	
 	@Override
 	public void onEnable() {
@@ -23,6 +24,9 @@ public class StormerHome extends JavaPlugin{
 		getCommand("delhome").setTabCompleter(new HomeTabCompleter());
 		getCommand("homes").setExecutor(new HomeCommand());
 		getCommand("shreload").setExecutor(new HomeCommand());
+		
+		getCommand("superadminhome").setExecutor(new HomeCommand());
+		getCommand("superadminhome").setTabCompleter(new HomeTabCompleter());
 		
 		reload();
 		

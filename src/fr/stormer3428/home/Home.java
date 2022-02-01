@@ -20,20 +20,7 @@ public class Home {
 	static List<Home> all = new ArrayList<>();
 
 	public Home(@Nonnull Location loc,@Nullable Player p, String n) {
-		for(Home home : all) {
-			if(home.owner == p.getName() && home.name == n) {
-				home.setLocation(loc);
-				home.setOwner(p.getName());
-				home.setName(n);
-				createHome(home);
-				return;
-			}
-		}
-		this.location = loc;
-		this.owner = p.getName();
-		this.name = n;
-		createHome(this);
-		all.add(this);
+		this(loc, p.getName(), n);
 	}
 
 	public Home(@Nonnull Location loc,@Nullable String name, String n) {
@@ -42,12 +29,14 @@ public class Home {
 				home.setLocation(loc);
 				home.setOwner(name);
 				home.setName(n);
+				createHome(home);
 				return;
 			}
 		}
 		this.location = loc;
 		this.owner = name;
 		this.name = n;
+		createHome(this);
 		all.add(this);
 	}
 	
@@ -82,7 +71,7 @@ public class Home {
 		}
 		return homes;
 	}
-	
+
 	public static Set<Home> getPlayerHomes(Player p){
 		return getPlayerHomes(p.getName());
 	}
@@ -103,6 +92,7 @@ public class Home {
 	
 	public void home(Player p) {
 		Message.normal(p, "Going to " + getName());
+		getLocation().getChunk().load(true);
 		p.teleport(getLocation());
 	}
 	

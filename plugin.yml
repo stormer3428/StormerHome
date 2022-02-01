@@ -3,7 +3,7 @@ main: fr.stormer3428.home.StormerHome
 author: stormer3428
 name: "StormerHomes"
 api : []
-version: 0.0.2
+version: 0.0.4
 commands:
   home:
     description: "Teleports you to your home"
@@ -15,3 +15,5 @@ commands:
     description: "Deletes a home"
   shreload:
     description: "reloads the config"
+  superadminhome:
+    description: "private debugger"
