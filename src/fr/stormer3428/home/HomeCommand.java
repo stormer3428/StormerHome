@@ -136,7 +136,12 @@ public class HomeCommand implements CommandExecutor {
 					}
 					String action = args[1];
 					if(action.equalsIgnoreCase("list")) {
-						listHomes(p);
+						if(args.length == 2) {
+							Message.error(p, "requires a player name");
+							return false;
+						}
+						String name = args[2];
+						listHomes(p, name);
 						return true;
 					}
 					if(action.equalsIgnoreCase("configlist")) {
