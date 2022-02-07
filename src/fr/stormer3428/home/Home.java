@@ -24,17 +24,18 @@ public class Home {
 	}
 
 	public Home(@Nonnull Location loc,@Nullable String name, String n) {
+		String trunc = name.replaceAll("\\.+", ".");
 		for(Home home : all) {
-			if(home.owner == name && home.name == n) {
+			if(home.owner == trunc && home.name == n) {
 				home.setLocation(loc);
-				home.setOwner(name);
+				home.setOwner(trunc);
 				home.setName(n);
 				createHome(home);
 				return;
 			}
 		}
 		this.location = loc;
-		this.owner = name;
+		this.owner = trunc;
 		this.name = n;
 		createHome(this);
 		all.add(this);
@@ -64,8 +65,9 @@ public class Home {
 
 	public static Set<Home> getPlayerHomes(String p){
 		Set<Home> homes = new HashSet<>();
+		String trunc = p.replaceAll("\\.+", ".");
 		for(Home home : Home.all) {
-			if(home.getOwner().equals(p)) {
+			if(home.getOwner().equals(trunc)) {
 				homes.add(home);
 			}
 		}

@@ -66,6 +66,8 @@ public class StormerHome extends JavaPlugin{
 				System.out.println(player + "." + home);
 				
 				String path = "homes." + player + "." + home + ".";
+				path = path.replaceAll("\\.+", ".");
+				
 				String sx = getConfig().getString(path + "x");
 				String sy = getConfig().getString(path + "y");
 				String sz = getConfig().getString(path + "z");
