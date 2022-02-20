@@ -11,6 +11,9 @@ import javax.annotation.Nullable;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import fr.stormer3428.home.common.Lang;
+import fr.stormer3428.home.common.Message;
+
 public class Home {
 
 	private Location location;
@@ -24,7 +27,10 @@ public class Home {
 	}
 
 	public Home(@Nonnull Location loc,@Nullable String name, String n) {
-		String trunc = name.replaceAll("\\.+", ".");
+		String trunc = name;
+		if(name.length() != 0 && name.toCharArray()[0] == '.') {
+			trunc = name.replaceFirst("\\.", "");
+		}
 		for(Home home : all) {
 			if(home.owner == trunc && home.name == n) {
 				home.setLocation(loc);
@@ -65,7 +71,10 @@ public class Home {
 
 	public static Set<Home> getPlayerHomes(String p){
 		Set<Home> homes = new HashSet<>();
-		String trunc = p.replaceAll("\\.+", ".");
+		String trunc = p;
+		if(p.length() != 0 && p.toCharArray()[0] == '.') {
+			trunc = p.replaceFirst("\\.", "");
+		}
 		for(Home home : Home.all) {
 			if(home.getOwner().equals(trunc)) {
 				homes.add(home);
@@ -93,7 +102,7 @@ public class Home {
 	}
 	
 	public void home(Player p) {
-		Message.normal(p, "Going to " + getName());
+		Message.normal(p, Lang.COMMAND_SUCCESS_HOME.toString().replace("{HOME}", getName()));
 		getLocation().getChunk().load(true);
 		p.teleport(getLocation());
 	}

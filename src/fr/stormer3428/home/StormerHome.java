@@ -8,6 +8,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import fr.stormer3428.home.common.Message;
+
 public class StormerHome extends JavaPlugin{
 
 	public static StormerHome i;
@@ -29,7 +31,6 @@ public class StormerHome extends JavaPlugin{
 		getCommand("superadminhome").setTabCompleter(new HomeTabCompleter());
 		
 		reload();
-		
 		super.onEnable();		
 	}
 
@@ -39,6 +40,7 @@ public class StormerHome extends JavaPlugin{
 	}
 	
 	public void reload() {
+		Message.instantiateLang(StormerHome.i);
 		Home.all.clear();
 		Set<String> keys = getConfig().getKeys(true);
 
@@ -66,7 +68,7 @@ public class StormerHome extends JavaPlugin{
 				System.out.println(player + "." + home);
 				
 				String path = "homes." + player + "." + home + ".";
-				path = path.replaceAll("\\.+", ".");
+				path = path.replaceAll("\\.+", "\\.");
 				
 				String sx = getConfig().getString(path + "x");
 				String sy = getConfig().getString(path + "y");
