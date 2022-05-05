@@ -8,10 +8,11 @@ public enum Lang {
 	ERROR_NO_DEFAULT_HOME("You do not have any default home set"),
 	ERROR_NO_HOME_SUCH_NAME("No home with such name : {HOME}"),
 	ERROR_NO_PERMISSION("You do not have the permission to use this command"),
-	ERROR_TOO_MANY_HOMES("You have too many homes set"),
+	ERROR_TOO_MANY_HOMES("You have too many homes set, type /delhome to remove a home"),
 	ERROR_MISSING_NAME("You need to specify a name"),
+	ERROR_MOVED("You moved! teleportation cancelled..."),
 
-	COMMAND_SUCCESS_HOME("Going to {HOME}"),
+	COMMAND_SUCCESS_HOME("Going to {HOME}, please stand still..."),
 	COMMAND_SUCCESS_SETHOME("Home {HOME} set"),
 	COMMAND_SUCCESS_DELHOME("Home {HOME} removed!"),
 	COMMAND_SUCCESS_RELOAD("Successfully relaoded the plugin"),

