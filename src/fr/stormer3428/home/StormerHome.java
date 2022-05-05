@@ -1,11 +1,9 @@
 package fr.stormer3428.home;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.stormer3428.home.common.Message;
@@ -42,40 +40,29 @@ public class StormerHome extends JavaPlugin{
 	public void reload() {
 		Message.instantiateLang(StormerHome.i);
 		Home.all.clear();
-		Set<String> keys = getConfig().getKeys(true);
+		ConfigurationSection homesSection = getConfig().getConfigurationSection("homes");
 
-		Set<String> players = new HashSet<>();
-		
-		for(String s : keys) {
-			String[] args = s.split("\\.");
-			if(args.length > 1 && args[0].equals("homes")) {
-				if(!players.contains(args[1])) players.add(args[1]);
-			}
-		}
-		
-		for(String player : players) {
-			Set<String> homes = new HashSet<>();
-
-			for(String s : keys) {
-				String[] args = s.split("\\.");
-				if(args.length > 2 && args[0].equals("homes") && args[1].equals(player)) {
-					if(!homes.contains(args[2])) homes.add(args[2]);
+		for(String playerUUID : homesSection.getKeys(false)) {
+			ConfigurationSection playerHomesSection = homesSection.getConfigurationSection(playerUUID);
+						
+			for(String home : playerHomesSection.getKeys(false)) {
+				ConfigurationSection homeSection = playerHomesSection.getConfigurationSection(home);
+				
+				Message.systemNormal("parsing home " + homeSection.getCurrentPath() + " ...");
+				
+				String sx = homeSection.getString("x");
+				String sy = homeSection.getString("y");
+				String sz = homeSection.getString("z");
+				String syaw = homeSection.getString("yaw");
+				String spitch = homeSection.getString("pitch");
+				String sworld = homeSection.getString("world");
+				String playername = homeSection.getString("playername");
+				try {
+				if(Bukkit.getPlayer(java.util.UUID.fromString(playerUUID)) != null) playername = Bukkit.getPlayer(java.util.UUID.fromString(playerUUID)).getName();
+				}catch (@SuppressWarnings("unused") Exception e) {
+					Message.error("Found a home that us formatted using the v0.0.9 format, the format changed to now use UUIDs and thus, is not retro compatible...");
+					continue;
 				}
-			}
-			
-			for(String home : homes) {
-				
-				Message.systemNormal(player + "." + home);
-				
-				String path = "homes." + player + "." + home + ".";
-				path = path.replaceAll("\\.+", "\\.");
-				
-				String sx = getConfig().getString(path + "x");
-				String sy = getConfig().getString(path + "y");
-				String sz = getConfig().getString(path + "z");
-				String syaw = getConfig().getString(path + "yaw");
-				String spitch = getConfig().getString(path + "pitch");
-				String sworld = getConfig().getString(path + "world");
 				try {
 					double x = Double.parseDouble(sx);
 					double y = Double.parseDouble(sy);
@@ -84,18 +71,32 @@ public class StormerHome extends JavaPlugin{
 					float pitch = Float.parseFloat(spitch);
 					World world = Bukkit.getWorld(sworld);
 					
-					if(world == null) Message.systemError("invalid world name for home : (" + path + ")");
+					if(world == null) {
+						Message.systemError("invalid world name for home : (" + homeSection.getCurrentPath() + ")");
+						Message.systemError("deleting...");
+						playerHomesSection.set(home, null);
+						loadConfig();
+					}
 					else {
-						Home h = new Home(new Location(world, x, y, z, yaw, pitch), player, home);
+						Home h = Home.createHome(new Location(world, x, y, z, yaw, pitch), java.util.UUID.fromString(playerUUID), home, playername);
 						Message.systemNormal("Created home");
 						Message.systemNormal(h.toString());
 					}
 				} catch (@SuppressWarnings("unused") Exception e) {
-					Message.systemError("invalid configuration for home : (" + path + ")");
+					Message.systemError("invalid configuration for home : (" + homeSection.getCurrentPath() + ")");
+					Message.systemError("deleting...");
+					playerHomesSection.set(home, null);
 				}
-				
 			}
 		}
+		loadConfig();
+		cleanupPlayerWithNoHomes();
 	}
+
+	public void cleanupPlayerWithNoHomes() {
+		ConfigurationSection homesSection = getConfig().getConfigurationSection("homes");
+		for(String playerUUID : homesSection.getKeys(false)) if(homesSection.getConfigurationSection(playerUUID).getKeys(false).size() == 0) homesSection.set(playerUUID, null);
+		loadConfig();
+	}	
 	
 }
