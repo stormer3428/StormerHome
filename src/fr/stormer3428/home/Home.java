@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import fr.stormer3428.home.common.Lang;
 import fr.stormer3428.home.common.Message;
@@ -103,8 +104,27 @@ public class Home {
 	
 	public void home(Player p) {
 		Message.normal(p, Lang.COMMAND_SUCCESS_HOME.toString().replace("{HOME}", getName()));
-		getLocation().getChunk().load(true);
-		p.teleport(getLocation());
+		Location originalLocation = p.getLocation();
+		boolean cancelOnMove = StormerHome.i.getConfig().getBoolean("cancelonmove");
+		new BukkitRunnable() {
+			int timer = StormerHome.i.getConfig().getInt("teleportationDelay");
+			@Override
+			public void run() {
+				if(cancelOnMove && originalLocation.distanceSquared(p.getLocation()) > 1) {
+					Message.error(p, Lang.ERROR_MOVED.toString());
+					cancel();
+					return;
+				}
+				if(timer == 0) {
+					getLocation().getChunk().load(true);
+					p.teleport(getLocation());
+					cancel();
+					return;
+				}
+				timer --;
+			}
+		}.runTaskTimer(StormerHome.i, 0, 1);
+		
 	}
 	
 	public Location getLocation() {
