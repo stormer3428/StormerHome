@@ -28,6 +28,17 @@ public class StormerHome extends JavaPlugin{
 		getCommand("superadminhome").setExecutor(new HomeCommand());
 		getCommand("superadminhome").setTabCompleter(new HomeTabCompleter());
 		
+		ConfigurationSection oldData = getConfig().getConfigurationSection("homes");
+		if(oldData != null) {
+			Message.normal("Detected an old data format, starting up the updaterListener");
+			Message.normal("This should only happen if you have update from <0.0.9 to >0.1.1");
+			Message.systemNormal("Detected an old data format, starting up the updaterListener");
+			Message.systemNormal("This should only happen if you have update from <0.0.9 to >0.1.1");
+			
+			getServer().getPluginManager().registerEvents(new UpdaterListener(), i);
+			
+		}
+		
 		reload();
 		super.onEnable();		
 	}
@@ -40,7 +51,8 @@ public class StormerHome extends JavaPlugin{
 	public void reload() {
 		Message.instantiateLang(StormerHome.i);
 		Home.all.clear();
-		ConfigurationSection homesSection = getConfig().getConfigurationSection("homes");
+		ConfigurationSection homesSection = getConfig().getConfigurationSection("homes2");
+		if(homesSection == null) return;
 
 		for(String playerUUID : homesSection.getKeys(false)) {
 			ConfigurationSection playerHomesSection = homesSection.getConfigurationSection(playerUUID);
@@ -94,7 +106,7 @@ public class StormerHome extends JavaPlugin{
 	}
 
 	public void cleanupPlayerWithNoHomes() {
-		ConfigurationSection homesSection = getConfig().getConfigurationSection("homes");
+		ConfigurationSection homesSection = getConfig().getConfigurationSection("homes2");
 		for(String playerUUID : homesSection.getKeys(false)) if(homesSection.getConfigurationSection(playerUUID).getKeys(false).size() == 0) homesSection.set(playerUUID, null);
 		loadConfig();
 	}	

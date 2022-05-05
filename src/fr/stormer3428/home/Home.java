@@ -45,7 +45,7 @@ public class Home {
 	}
 	
 	private static void saveToConfig(Home home) {
-		String path = "homes." + home.ownerUUID + "." + home.name + ".";
+		String path = "homes2." + home.ownerUUID + "." + home.name + ".";
 		StormerHome.i.getConfig().set(path + "x", home.location.getX());
 		StormerHome.i.getConfig().set(path + "y", home.location.getY());
 		StormerHome.i.getConfig().set(path + "z", home.location.getZ());
@@ -57,7 +57,7 @@ public class Home {
 	}
 	
 	public static void deleteHome(Home home) {
-		String path = "homes." + home.ownerUUID + "." + home.name;
+		String path = "homes2." + home.ownerUUID + "." + home.name;
 		StormerHome.i.getConfig().set(path, null);
 		StormerHome.i.cleanupPlayerWithNoHomes();
 		StormerHome.i.loadConfig();
