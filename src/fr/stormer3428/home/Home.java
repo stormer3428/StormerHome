@@ -60,7 +60,7 @@ public class Home {
 	
 	public static void deleteHome(Home home) {
 		String path = "homes." + home.owner + "." + home.name;
-		StormerHome.i.getConfig().set(path, "");
+		StormerHome.i.getConfig().set(path, null);
 		StormerHome.i.loadConfig();
 		all.remove(home);
 	}

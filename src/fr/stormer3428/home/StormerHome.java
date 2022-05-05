@@ -65,7 +65,7 @@ public class StormerHome extends JavaPlugin{
 			
 			for(String home : homes) {
 				
-				System.out.println(player + "." + home);
+				Message.systemNormal(player + "." + home);
 				
 				String path = "homes." + player + "." + home + ".";
 				path = path.replaceAll("\\.+", "\\.");
@@ -84,14 +84,14 @@ public class StormerHome extends JavaPlugin{
 					float pitch = Float.parseFloat(spitch);
 					World world = Bukkit.getWorld(sworld);
 					
-					if(world == null) System.err.println("invalid world name for home : (" + path + ")");
+					if(world == null) Message.systemError("invalid world name for home : (" + path + ")");
 					else {
 						Home h = new Home(new Location(world, x, y, z, yaw, pitch), player, home);
-						System.out.println("Created home");
-						System.out.println(h.toString());
+						Message.systemNormal("Created home");
+						Message.systemNormal(h.toString());
 					}
-				} catch (Exception e) {
-					System.err.println("invalid configuration for home : (" + path + ")");
+				} catch (@SuppressWarnings("unused") Exception e) {
+					Message.systemError("invalid configuration for home : (" + path + ")");
 				}
 				
 			}
