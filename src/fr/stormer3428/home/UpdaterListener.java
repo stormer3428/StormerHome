@@ -50,6 +50,11 @@ public class UpdaterListener implements Listener {
 			Message.systemNormal("Trying to port " + playerHome);
 
 			ConfigurationSection playerHomeSection = playerhomesSection.getConfigurationSection(playerHome);
+			if(playerHomeSection == null) {
+				playerhomesSection.set(playerHome, null);
+				Message.systemNormal(playerHome + " was only a remaining artifact of <0.0.8, removing...");
+				continue;
+			}
 
 			double x = playerHomeSection.getDouble("x");
 			double y = playerHomeSection.getDouble("y");
