@@ -5,6 +5,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum Lang {
 
+	PREFIX_COMMAND("§3[§6StormerHomes§3]§2"),
+	PREFIX_ERROR("§3[§4Error§3]§c"),
+	
 	ERROR_NO_DEFAULT_HOME("You do not have any default home set"),
 	ERROR_NO_HOME_SUCH_NAME("No home with such name : {HOME}"),
 	ERROR_NO_PERMISSION("You do not have the permission to use this command"),
@@ -20,8 +23,9 @@ public enum Lang {
 	COMMAND_LISTHOMES_HEADER("<===========(Homes of {PLAYERNAME})===========>"),
 	COMMAND_LISTHOMES_BODY(" - {HOME} : {HOME.WORLD} {HOME.X} {HOME.Y} {HOME.Z}"),
 	COMMAND_LISTHOMES_FOOTER("<===========(Homes of {PLAYERNAME})===========>"),
-	
+
 	COMMAND_USAGE_DELHOME("Usage : delhome <name>"),
+	
 	;
 	
 	private String path;

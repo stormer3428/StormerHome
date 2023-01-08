@@ -18,7 +18,7 @@ public class UpdaterListener implements Listener {
 		reduceOldData();
 	}
 
-	private void reduceOldData() {
+	private static void reduceOldData() {
 		ConfigurationSection homesSection = StormerHome.i.getConfig().getConfigurationSection("homes");
 		for(String playerName : homesSection.getKeys(false)) {
 			if(homesSection.getConfigurationSection(playerName).getKeys(false).size() == 0) homesSection.set(playerName, null);
@@ -30,15 +30,16 @@ public class UpdaterListener implements Listener {
 
 	@EventHandler
 	public void onjoin(PlayerJoinEvent e) {
+		boolean debug = StormerHome.i.getConfig().getBoolean("logHomesRegistering");
 		reduceOldData();
-		Message.systemNormal("Checking if player " + e.getPlayer().getName() + " has any homes stored in the old format...");
+		if(debug) Message.systemNormal("Checking if player " + e.getPlayer().getName() + " has any homes stored in the old format...");
 
 		String formattedPlayerName = e.getPlayer().getName().replace(".", "");
 		ConfigurationSection homesSection = StormerHome.i.getConfig().getConfigurationSection("homes");
 
 		Set<String> playerNames = homesSection.getKeys(false);
 		if(!playerNames.contains(formattedPlayerName)) {
-			Message.systemNormal("Everything seems up to date");
+			if(debug) Message.systemNormal("Everything seems up to date");
 			return;
 		}
 

@@ -28,12 +28,14 @@ public class StormerHome extends JavaPlugin{
 		getCommand("superadminhome").setExecutor(new HomeCommand());
 		getCommand("superadminhome").setTabCompleter(new HomeTabCompleter());
 
+		loadConfig();
+		Message.instantiateLang(StormerHome.i);
 		ConfigurationSection oldData = getConfig().getConfigurationSection("homes");
 		if(oldData != null) {
 			Message.normal("Detected an old data format, starting up the updaterListener");
 			Message.normal("This should only happen if you have update from <0.0.9 to >0.1.1");
 			Message.systemNormal("Detected an old data format, starting up the updaterListener");
-			Message.systemNormal("This should only happen if you have update from <0.0.9 to >0.1.1");
+			Message.systemNormal("This should only happen if you have updated from <0.0.9 to >0.1.1");
 
 			getServer().getPluginManager().registerEvents(new UpdaterListener(), i);
 
@@ -49,14 +51,17 @@ public class StormerHome extends JavaPlugin{
 	}
 
 	public void reload() {
+		loadConfig();
 		Message.instantiateLang(StormerHome.i);
 		Home.all.clear();
 		ConfigurationSection homesSection = getConfig().getConfigurationSection("homes2");
+		boolean debug = getConfig().getBoolean("logHomesRegistering");
+		Message.systemNormal("Loading all homes...");
 		if(homesSection == null) return;
 
 		for(String playerUUID : homesSection.getKeys(false)) {
 			ConfigurationSection playerHomesSection = homesSection.getConfigurationSection(playerUUID);
-			Message.systemNormal("Loading homes of UUID " + playerUUID + "...");
+			if(debug) Message.systemNormal("Loading homes of UUID " + playerUUID + "...");
 			for(String home : playerHomesSection.getKeys(false)) {
 				ConfigurationSection homeSection = playerHomesSection.getConfigurationSection(home);
 
@@ -72,7 +77,7 @@ public class StormerHome extends JavaPlugin{
 				
 				try {
 					if(Bukkit.getPlayer(java.util.UUID.fromString(playerUUID)) != null) playername = Bukkit.getPlayer(java.util.UUID.fromString(playerUUID)).getName();
-				}catch (@SuppressWarnings("unused") Exception e) {
+				}catch (Exception e) {
 					Message.error("Found a home that use formatted using the v0.0.9 format, the format changed to now use UUIDs and thus, is not retro compatible...");
 					Message.error("to port that home, simply put it back in the \"homes\" section instead of \"home2\" and it will be ported automatically when the owner of the home joins");
 					continue;
@@ -86,21 +91,23 @@ public class StormerHome extends JavaPlugin{
 					World world = Bukkit.getWorld(sworld);
 
 					if(world == null) {
-						Message.systemError("invalid world name for home : (" + homeSection.getCurrentPath() + ")");
-						Message.systemError("skipping...");
+						if(debug) Message.systemError("invalid world name for home : (" + homeSection.getCurrentPath() + ")");
+						if(debug) Message.systemError("skipping...");
 						loadConfig();
 					}
 					else Home.createHome(new Location(world, x, y, z, yaw, pitch), java.util.UUID.fromString(playerUUID), home, playername);
 
-				} catch (@SuppressWarnings("unused") Exception e) {
+				} catch (Exception e) {
 					Message.systemError("invalid configuration for home : (" + homeSection.getCurrentPath() + ")");
 					Message.systemError("skipping...");
 				}
 			}
-			Message.systemNormal("Successfully loaded " + Home.getPlayerHomes(java.util.UUID.fromString(playerUUID)).size() + " homes!");
+			if(debug) Message.systemNormal("Successfully loaded " + Home.getPlayerHomes(java.util.UUID.fromString(playerUUID)).size() + " homes!");
 		}
 		loadConfig();
 		cleanupPlayerWithNoHomes();
+		int size = Home.all.size();
+		Message.systemNormal(size + " home" + (size > 1 ? "s" : "") + " loaded!");
 	}
 
 	public void cleanupPlayerWithNoHomes() {
