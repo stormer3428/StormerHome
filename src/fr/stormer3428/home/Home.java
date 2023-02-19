@@ -110,14 +110,14 @@ public class Home {
 			int timer = StormerHome.i.getConfig().getInt("teleportationDelay");
 			@Override
 			public void run() {
-				if(cancelOnMove && originalLocation.getWorld() != p.getWorld() && originalLocation.distanceSquared(p.getLocation()) > 1) {
-					Message.error(p, Lang.ERROR_MOVED.toString());
-					cancel();
-					return;
-				}
 				if(timer == 0) {
 					getLocation().getChunk().load(true);
 					p.teleport(getLocation());
+					cancel();
+					return;
+				}
+				if(cancelOnMove && (originalLocation.getWorld() != p.getWorld() || originalLocation.distanceSquared(p.getLocation()) > 1)) {
+					Message.error(p, Lang.ERROR_MOVED.toString());
 					cancel();
 					return;
 				}

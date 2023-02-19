@@ -57,14 +57,26 @@ public class StormerHome extends JavaPlugin{
 		ConfigurationSection homesSection = getConfig().getConfigurationSection("homes2");
 		boolean debug = getConfig().getBoolean("logHomesRegistering");
 		Message.systemNormal("Loading all homes...");
-		if(homesSection == null) return;
+		if(homesSection == null) {
+			Message.systemNormal("No homes registered (couldn't find 'homes2' yaml section)");
+			return;
+		}
 
 		for(String playerUUID : homesSection.getKeys(false)) {
 			ConfigurationSection playerHomesSection = homesSection.getConfigurationSection(playerUUID);
+			if(playerHomesSection == null) {
+				Message.systemError("Config section for " + playerUUID + " is null! skipping...");
+				continue;
+			}
 			if(debug) Message.systemNormal("Loading homes of UUID " + playerUUID + "...");
 			for(String home : playerHomesSection.getKeys(false)) {
 				ConfigurationSection homeSection = playerHomesSection.getConfigurationSection(home);
 
+				if(homeSection == null) {
+					Message.systemError("Config section for " + playerUUID + "." + home +" is null! skipping...");
+					continue;
+				}
+				
 				//Message.systemNormal("parsing home " + homeSection.getCurrentPath() + " ...");
 
 				String sx = 		homeSection.getString("x");

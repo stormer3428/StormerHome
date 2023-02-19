@@ -3,7 +3,7 @@ main: fr.stormer3428.home.StormerHome
 author: stormer3428
 name: "StormerHomes"
 api : []
-version: 0.1.3
+version: 0.1.7
 commands:
   home:
     description: "Teleports you to your home"

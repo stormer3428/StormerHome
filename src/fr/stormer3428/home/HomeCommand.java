@@ -47,10 +47,12 @@ public class HomeCommand implements CommandExecutor {
 				}
 				if(args.length == 0) {
 					Home.createHome(p.getLocation(), p.getUniqueId(), "Home", p.getName());
-					Message.normal(p, Lang.COMMAND_SUCCESS_SETHOME.toString().replace("{HOME}", "Home"));
-					return true;
+					return Message.normal(p, Lang.COMMAND_SUCCESS_SETHOME.toString().replace("{HOME}", "Home"));
 				}
-				Home.createHome(p.getLocation(), p.getUniqueId(), args[0], p.getName());
+				String homeName = args[0];
+				if(homeName.contains(".")) return Message.error(p, Lang.ERROR_INVALID_HOME_NAME.toString());
+				
+				Home.createHome(p.getLocation(), p.getUniqueId(), homeName, p.getName());
 				Message.normal(p, Lang.COMMAND_SUCCESS_SETHOME.toString().replace("{HOME}", args[0]));
 				return true;
 			}else if(cmd.getName().equalsIgnoreCase("delhome")) {

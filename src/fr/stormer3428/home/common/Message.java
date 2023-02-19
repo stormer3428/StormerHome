@@ -43,9 +43,10 @@ public class Message {
 		}
 	}
 
-	public static void normal(CommandSender p,String strg){
+	public static boolean normal(CommandSender p,String strg){
 		String m = Lang.PREFIX_COMMAND.toString() + strg;
 		p.sendMessage(m);
+		return true;
 	}
 
 	public static void normal(String strg){
@@ -60,9 +61,10 @@ public class Message {
 		}
 	}
 
-	public static void error(CommandSender p, String strg){
+	public static boolean error(CommandSender p, String strg){
 		String m = Lang.PREFIX_ERROR.toString() + strg;
 		p.sendMessage(m);
+		return false;
 	}
 
 	public static void error(String strg){
